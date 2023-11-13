@@ -22,7 +22,7 @@
     ```sh
     npm run dev
     ```
-4. Open [http://localhost:5000](http://localhost:5000) to view it in the browser.
+4. Open [http://localhost:5000/api/v1/](http://localhost:5000/api/v1/) to view it in the browser.
 
 ## Usage
 
