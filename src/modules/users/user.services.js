@@ -16,9 +16,14 @@ const updateById = async (id, payload) => {
   return prisma.user.update({ where: { id }, data: payload });
 };
 
+const findByEmail = (email) => {
+  return prisma.user.findFirst({ where: { email } });
+};
+
 export default {
   create,
   getAll,
   getById,
   updateById,
+  findByEmail,
 };
