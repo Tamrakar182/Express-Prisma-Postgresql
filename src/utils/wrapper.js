@@ -1,5 +1,5 @@
-export function asyncWrapper(fn) {
+export default function asyncWrapper(fn) {
     return function(req, res, next) {
       fn(req, res, next).catch(next);
     };
-  }
+}
