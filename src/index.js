@@ -2,6 +2,9 @@ import express from 'express';
 import indexRouter from './routes/index.js';
 import sendResponse from './utils/responseSender.js';
 import cors from 'cors';
+import {
+	StatusCodes,
+} from 'http-status-codes';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
