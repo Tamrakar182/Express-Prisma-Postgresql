@@ -1,23 +1,27 @@
 import { Router } from "express";
-import Controller from "./auth.controller";
+import Controller from "./auth.controller.js";
 
 const router = Router();
 
-router.post("/login", (req, res, next) => {
+router.post("/login", async (req, res, next) => {
     try {
-        const result = Controller.login(req, res);
-        res.json({ data: result, msg: "success" });
+        const { email, password } = req.body;
+        if (!email || !password) {
+            throw new Error("Email and password are required");
+        }
+        const result = await Controller.login(email, password);
+        res.json({ data: result, msg: "Logged in Successfully" });
     } catch(e) {
-        next(e);
+        res.status(400).json({ msg: e.message });
     }
 });
 
-router.post("/register", (req, res, next) => {
+router.post("/register", async (req, res, next) => {
     try {
-        const result = Controller.register(req, res);
-        res.json({ data: result, msg: "success" });
+        const result = await Controller.register(req.body);
+        res.json({ data: result, msg: "User Successfully Created" });
     } catch(e) {
-        next(e);
+        res.status(400).json({ msg: e.message });
     }
 });
 

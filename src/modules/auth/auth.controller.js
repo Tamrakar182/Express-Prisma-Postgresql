@@ -1,37 +1,37 @@
 import bcrypt from "bcrypt";
+import prisma from "../../database/prisma.js";
 
-const login = async (req, res) => {
-    const { email, password } = req.body;
-    const user = await req.db.user.findUnique({
-        where: { email },
+const login = async (email, password) => {
+    const user = await prisma.user.findFirst({
+        where: { email }
     });
     if (!user) {
-        return res.status(404).json({ message: "User not found" });
+        throw new Error("User not found");
     }
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-        return res.status(401).json({ message: "Incorrect password" });
+        throw new Error("Incorrect password");
     }
-    return res.status(200).json({ message: "Login successful" });
+    return user;
 };
 
-const register = async (req, res) => {
-    const { email, password } = req.body;
-    const user = await req.db.user.findUnique({
+const register = async (payload) => {
+      const { email, password } = payload;
+      const user = await prisma.user.findFirst({
         where: { email },
-    });
-    if (user) {
-        return res.status(409).json({ message: "User already exists" });
-    }
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = await req.db.user.create({
+      });
+      if (user) {
+        throw new Error("User already exists");
+      }
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const newUser = await prisma.user.create({
         data: {
-            email,
-            password: hashedPassword,
+          email,
+          password: hashedPassword,
         },
-    });
-    return res.status(201).json({ message: "User created", data: newUser });
-}
+      });
+      return newUser;
+};
 
 export default {
     login,

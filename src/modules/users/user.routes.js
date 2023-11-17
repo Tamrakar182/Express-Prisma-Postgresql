@@ -8,7 +8,7 @@ router.get("/", async (req, res, next) => {
         const result = await Controller.getAll();
         res.json({ data: result, msg: "success" });
     } catch (e) {
-        next(e);
+        res.status(400).json({ msg: e.message });
     }
 })
 
@@ -17,7 +17,7 @@ router.get("/:id", async (req, res, next) => {
     const result = await Controller.getById(req.params.id);
     res.json({ data: result, msg: "success" });
   } catch (e) {
-    next(e);
+    res.status(400).json({ msg: e.message });
   }
 });
 
@@ -26,7 +26,7 @@ router.post("/", async (req, res, next) => {
     const result = await Controller.create(req.body);
     res.json({ data: result, msg: "success" });
   } catch (e) {
-    next(e);
+    res.status(400).json({ msg: e.message });
   }
 });
 
@@ -35,7 +35,7 @@ router.put("/:id", async (req, res, next) => {
     const result = await Controller.updateById(req.params.id, req.body);
     res.json({ data: result, msg: "success" });
   } catch (e) {
-    next(e);
+    res.status(400).json({ msg: e.message });
   }
 });
 
