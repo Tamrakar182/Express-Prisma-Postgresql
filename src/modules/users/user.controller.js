@@ -1,24 +1,42 @@
-import prisma from "../../database/prisma.js";
+import express from "express";
+import UserService from "./user.services.js";
 
-const create = async (payload) => {
-  return prisma.user.create({ data: payload });
-};
+const router = express.Router();
 
-const getAll = async () => {
-  return prisma.user.findMany();
-};
+router.get("/", async (req, res, next) => {
+    try {
+        const result = await UserService.getAll();
+        res.json({ data: result, msg: "success" });
+    } catch (e) {
+        res.status(400).json({ msg: e.message });
+    }
+})
 
-const getById = (id) => {
-  return prisma.user.findUnique({ where: { id } });
-};
+router.get("/:id", async (req, res, next) => {
+  try {
+    const result = await UserService.getById(req.params.id);
+    res.json({ data: result, msg: "success" });
+  } catch (e) {
+    res.status(400).json({ msg: e.message });
+  }
+});
 
-const updateById = async (id, payload) => {
-  return prisma.user.update({ where: { id }, data: payload });
-};
+router.post("/", async (req, res, next) => {
+  try {
+    const result = await UserService.create(req.body);
+    res.json({ data: result, msg: "success" });
+  } catch (e) {
+    res.status(400).json({ msg: e.message });
+  }
+});
 
-export default {
-  create,
-  getAll,
-  getById,
-  updateById,
-};
+router.put("/:id", async (req, res, next) => {
+  try {
+    const result = await UserService.updateById(req.params.id, req.body);
+    res.json({ data: result, msg: "success" });
+  } catch (e) {
+    res.status(400).json({ msg: e.message });
+  }
+});
+
+export default router;
