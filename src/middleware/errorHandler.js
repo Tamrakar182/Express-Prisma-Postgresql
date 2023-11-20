@@ -4,7 +4,7 @@ import sendResponse from '../utils/responseSender.js';
 
 const errorHandler = (err, req, res, next) => {
   if (err instanceof CustomAPIError) {
-    return res.status(err.statusCode).json({ msg: err.message })
+    sendResponse(res, err.statusCode, null, err.message)
   }
   sendResponse(res, StatusCodes.INTERNAL_SERVER_ERROR, null, "Something went wrong try again later");
 }

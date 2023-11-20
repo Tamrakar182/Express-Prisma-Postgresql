@@ -6,13 +6,14 @@ import {
 	ReasonPhrases,
 	StatusCodes,
 } from 'http-status-codes';
+import BadRequest from "../../errors/badRequest.js";
 
 const router = Router();
 
 router.post("/login", asyncWrapper(async (req, res) => {
     const { email, password } = req.body;
     if (!email || !password) {
-        sendResponse(res, StatusCodes.BAD_REQUEST, result, "Email and password are required");
+        throw new BadRequest("Email and password are required");
     }
     const result = await AuthServices.login(email, password);
     sendResponse(res, StatusCodes.OK, result, ReasonPhrases.OK);
@@ -21,7 +22,7 @@ router.post("/login", asyncWrapper(async (req, res) => {
 router.post("/register", asyncWrapper(async (req, res) => {
     const { email, password } = req.body;
     if (!email || !password) {
-        sendResponse(res, StatusCodes.BAD_REQUEST, result, "Email and password are required");    
+        throw new BadRequest("Email and password are required");   
     }
     const result = await AuthServices.register(email, password);
     sendResponse(res, StatusCodes.CREATED, result, ReasonPhrases.CREATED);    

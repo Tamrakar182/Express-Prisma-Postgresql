@@ -8,15 +8,15 @@ import {
 
 const router = express.Router();
 
-router.get("/", (req, res, next) => {
-  sendResponse(res, StatusCodes.OK, result, "API Router is working");
+router.get("/", (req, res) => {
+  sendResponse(res, StatusCodes.OK, null, "API Router is working");
 });
 
 router.use("/users", userController);
 router.use("/auth", authController);
 
-router.all("*", (req, res, next) => {
-  sendResponse(res, StatusCodes.NOT_FOUND, null, "API endpoint not found");
+router.all("*", (req, res) => {
+  sendResponse(res, StatusCodes.NOT_FOUND, null, `Can't find ${req.originalUrl} on this server!`);
 });
 
 export default router;
