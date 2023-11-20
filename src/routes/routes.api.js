@@ -1,6 +1,6 @@
 import express from "express";
-import userController from "../modules/users/user.controller.js";
-import authController from "../modules/auth/auth.controller.js";
+import userController from "../controller/users/user.controller.js";
+import authController from "../controller/auth/auth.controller.js";
 import sendResponse from "../utils/responseSender.js";
 import {
 	StatusCodes,
