@@ -11,12 +11,12 @@ import 'express-async-errors';
 
 const router = express.Router();
 
-router.get("/", authHandler, async (req, res, next) => {
+router.get("/", authHandler, async (req, res) => {
   const result = await UserService.getAll();
   return sendResponse(res, StatusCodes.OK, result, ReasonPhrases.OK);
 });
 
-router.get("/:id", authHandler, async (req, res, next) => {
+router.get("/:id", authHandler, async (req, res) => {
   const result = await UserService.getById(req.params.id);
   if (!result) {
     throw new NotFound("User not found");
@@ -24,7 +24,7 @@ router.get("/:id", authHandler, async (req, res, next) => {
   return sendResponse(res, StatusCodes.OK, result, ReasonPhrases.OK);
 });
 
-router.put("/:id", authHandler, async (req, res, next) => {
+router.put("/:id", authHandler, async (req, res) => {
   const existingUser = await UserService.getById(req.params.id);
   const tokenisedUser = req.user;
   if (existingUser.id !== tokenisedUser.id) {

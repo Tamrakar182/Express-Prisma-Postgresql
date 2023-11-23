@@ -1,5 +1,5 @@
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
+import { generateJWT } from "../../utils/jwt.js";
 import userServices from "../users/user.services.js";
 import NotFound from "../../errors/notFound.js";
 import BadRequest from "../../errors/badRequest.js";
@@ -13,9 +13,11 @@ const login = async (email, password) => {
   if (!isMatch) {
     throw new BadRequest("Incorrect password");
   }
-  const token = jwt.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRES_IN,
-  });
+  const tokenPayload = {
+    id: user.id,
+    email: user.email,
+  }
+  const token = generateJWT(tokenPayload);
   return {user, token};
 };
 
