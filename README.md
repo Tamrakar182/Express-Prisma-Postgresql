@@ -12,7 +12,7 @@
 
 1. Clone the repo
    ```sh
-   git clone![prisma](https://github.com/Tamrakar182/Express-Prisma-Postgresql/assets/84511488/ffcefc88-4704-459d-844d-914bbc9b34ab)
+   git clone
 
     ```
 2. Install NPM packages
