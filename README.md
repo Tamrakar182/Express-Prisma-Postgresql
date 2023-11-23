@@ -12,7 +12,8 @@
 
 1. Clone the repo
    ```sh
-   git clone
+   git clone![prisma](https://github.com/Tamrakar182/Express-Prisma-Postgresql/assets/84511488/ffcefc88-4704-459d-844d-914bbc9b34ab)
+
     ```
 2. Install NPM packages
     ```sh
@@ -47,3 +48,7 @@
     ```sh
     npx prisma studio
     ```
+
+### Database ERD
+
+![prisma](https://github.com/Tamrakar182/Express-Prisma-Postgresql/assets/84511488/ca61bee2-8ee1-4d11-b410-2ff7cb6caa42)
