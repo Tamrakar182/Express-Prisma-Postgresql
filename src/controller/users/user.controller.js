@@ -39,4 +39,17 @@ router.put("/:id", authHandler, async (req, res) => {
   return sendResponse(res, StatusCodes.OK, result, ReasonPhrases.OK);
 });
 
+router.delete("/:id", authHandler, async (req, res) => {
+  // Check if user exists
+  const existingUser = await UserService.getById(req.params.id);
+  const tokenisedUser = req.user;
+  // Check if user is trying to delete their own profile
+  if (existingUser.id !== tokenisedUser.id) {
+    throw new NotFound("User not found");
+  }
+  // Delete user
+  const result = await UserService.deleteById(req.params.id);
+  return sendResponse(res, StatusCodes.OK, result, ReasonPhrases.OK);
+});
+
 export default router;
