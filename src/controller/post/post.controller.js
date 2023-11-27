@@ -6,6 +6,8 @@ import {
     StatusCodes,
 } from 'http-status-codes';
 import NotFound from "../../errors/notFound.js";
+import Unauthenticated from "../../errors/unauthenticated.js";
+import BadRequest from "../../errors/badRequest.js";
 import { authHandler } from "../../middleware/authHandler.js";
 import 'express-async-errors';
 
@@ -21,7 +23,7 @@ router.post("/", authHandler, async (req, res) => {
     // Create new post
     const { title, content } = req.body;
     if (!title || !content) {
-        throw new NotFound("Title and content are required");
+        throw new BadRequest("Title and content are required");
     }
     const result = await PostService.createPost({ title, content, authorId: req.user.id});
     return sendResponse(res, StatusCodes.CREATED, result, ReasonPhrases.CREATED);
@@ -49,9 +51,9 @@ router.put("/:id", authHandler, async (req, res) => {
     // Update post
     const existingPost = await PostService.getByPostId(req.params.id);
     const tokenisedUser = req.user;
-    // Check if user is trying to update their own post
-    if (existingPost.authorId !== tokenisedUser.id) {
-        throw new NotFound("Post not found");
+    // Check if user is trying to update their own post or if they are not an admin
+    if (existingPost.authorId !== tokenisedUser.id && !tokenisedUser.role.includes("ADMIN")) {
+        throw new Unauthenticated("Permission Denied");
     }
     // Update post
     const result = await PostService.updateByPostId(req.params.id, req.body);
@@ -65,9 +67,9 @@ router.delete("/:id", authHandler, async (req, res) => {
     // Delete post
     const existingPost = await PostService.getByPostId(req.params.id);
     const tokenisedUser = req.user;
-    // Check if user is trying to delete their own post
-    if (existingPost.authorId !== tokenisedUser.id) {
-        throw new NotFound("Post not found");
+    // Check if user is trying to delete their own post or if they are not an admin
+    if (existingPost.authorId !== tokenisedUser.id && !tokenisedUser.role.includes("ADMIN")) {
+        throw new Unauthenticated("Permission Denied");
     }
     // Delete post
     const result = await PostService.deleteByPostId(req.params.id);

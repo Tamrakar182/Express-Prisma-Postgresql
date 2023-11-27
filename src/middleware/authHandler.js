@@ -38,4 +38,11 @@ const refreshTokenHandler = async (refreshToken) => {
     return { accessToken: newAccessToken, refreshToken: newRefreshToken };
 };
 
-export { authHandler, refreshTokenHandler };
+const adminHandler = async (req, res, next) => {
+    if (!req.user.role.includes("ADMIN")) {
+        throw new Unauthenticated("Unauthorized");
+    }
+    next();
+};
+
+export { authHandler, refreshTokenHandler, adminHandler };
