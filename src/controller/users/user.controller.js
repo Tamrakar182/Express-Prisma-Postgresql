@@ -5,7 +5,7 @@ import {
 	ReasonPhrases,
 	StatusCodes,
 } from 'http-status-codes';
-import { authHandler, adminHandler } from "../../middleware/authHandler.js";
+import { authHandler, verifyAdmin } from "../../middleware/authHandler.js";
 import 'express-async-errors';
 import NotFound from "../../errors/notFound.js";
 
@@ -26,7 +26,7 @@ router.get("/:id", authHandler, async (req, res) => {
   return sendResponse(res, StatusCodes.OK, result, ReasonPhrases.OK);
 });
 
-router.put("/:id", authHandler, adminHandler, async (req, res) => {
+router.put("/:id", authHandler, verifyAdmin, async (req, res) => {
   // Check if user exists
   const existingUser = await UserService.getById(req.params.id);
   if (!existingUser) {
@@ -37,7 +37,7 @@ router.put("/:id", authHandler, adminHandler, async (req, res) => {
   return sendResponse(res, StatusCodes.OK, result, ReasonPhrases.OK);
 });
 
-router.delete("/:id", authHandler, adminHandler, async (req, res) => {
+router.delete("/:id", authHandler, verifyAdmin, async (req, res) => {
   // Check if user exists
   const existingUser = await UserService.getById(req.params.id);
   if (!existingUser) {

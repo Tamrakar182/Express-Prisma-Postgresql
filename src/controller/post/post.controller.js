@@ -6,9 +6,8 @@ import {
     StatusCodes,
 } from 'http-status-codes';
 import NotFound from "../../errors/notFound.js";
-import Unauthenticated from "../../errors/unauthenticated.js";
 import BadRequest from "../../errors/badRequest.js";
-import { authHandler } from "../../middleware/authHandler.js";
+import { authHandler, verifyOwnerOrAdmin } from "../../middleware/authHandler.js";
 import 'express-async-errors';
 
 const router = express.Router();
@@ -47,14 +46,7 @@ router.get("/user/:id", async (req, res) => {
     return sendResponse(res, StatusCodes.OK, result, ReasonPhrases.OK);
 });
 
-router.put("/:id", authHandler, async (req, res) => {
-    // Update post
-    const existingPost = await PostService.getByPostId(req.params.id);
-    const tokenisedUser = req.user;
-    // Check if user is trying to update their own post or if they are not an admin
-    if (existingPost.authorId !== tokenisedUser.id && !tokenisedUser.role.includes("ADMIN")) {
-        throw new Unauthenticated("Permission Denied");
-    }
+router.put("/:id", authHandler, verifyOwnerOrAdmin, async (req, res) => {
     // Update post
     const result = await PostService.updateByPostId(req.params.id, req.body);
     if (!result) {
@@ -63,14 +55,7 @@ router.put("/:id", authHandler, async (req, res) => {
     return sendResponse(res, StatusCodes.OK, result, ReasonPhrases.OK);
 });
 
-router.delete("/:id", authHandler, async (req, res) => {
-    // Delete post
-    const existingPost = await PostService.getByPostId(req.params.id);
-    const tokenisedUser = req.user;
-    // Check if user is trying to delete their own post or if they are not an admin
-    if (existingPost.authorId !== tokenisedUser.id && !tokenisedUser.role.includes("ADMIN")) {
-        throw new Unauthenticated("Permission Denied");
-    }
+router.delete("/:id", authHandler, verifyOwnerOrAdmin, async (req, res) => {
     // Delete post
     const result = await PostService.deleteByPostId(req.params.id);
     if (!result) {

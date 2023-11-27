@@ -1,6 +1,7 @@
 import { verifyJWT, generateJWT } from "../utils/jwt.js";
 import Unauthenticated from "../errors/unauthenticated.js";
 import userService from "../services/users/user.services.js";
+import postService from "../services/posts/post.services.js";
 
 const authHandler = async (req, res, next) => {
     // Check if Authorization header is present
@@ -38,11 +39,22 @@ const refreshTokenHandler = async (refreshToken) => {
     return { accessToken: newAccessToken, refreshToken: newRefreshToken };
 };
 
-const adminHandler = async (req, res, next) => {
+const verifyAdmin = async (req, res, next) => {
+    // Check if user is admin
     if (!req.user.role.includes("ADMIN")) {
         throw new Unauthenticated("Unauthorized");
     }
     next();
 };
 
-export { authHandler, refreshTokenHandler, adminHandler };
+const verifyOwnerOrAdmin = async (req, res, next) => {
+    const existingPost = await postService.getByPostId(req.params.id);
+    const tokenisedUser = req.user;
+    // Check if user is trying to update their own post or if they are not an admin
+    if (existingPost.authorId !== tokenisedUser.id && !tokenisedUser.role.includes("ADMIN")) {
+        throw new Unauthenticated("Permission Denied");
+    }
+    next();
+}
+
+export { authHandler, refreshTokenHandler, verifyAdmin, verifyOwnerOrAdmin };
