@@ -5,18 +5,20 @@ import {
 	ReasonPhrases,
 	StatusCodes,
 } from 'http-status-codes';
-import { authHandler, verifyAdmin } from "../../middleware/authHandler.js";
+import { authHandler, verifyRoles } from "../../middleware/authHandler.js";
 import 'express-async-errors';
 import NotFound from "../../errors/notFound.js";
 
 const router = express.Router();
 
+// anyone can view all users
 router.get("/", authHandler, async (req, res) => {
   // Get all users
   const result = await UserService.getAll();
   return sendResponse(res, StatusCodes.OK, result, ReasonPhrases.OK);
 });
 
+// loggedin user can only view their own user's data
 router.get("/:id", authHandler, async (req, res) => {
   // Check if user exists
   const result = await UserService.getById(req.params.id);
@@ -26,7 +28,8 @@ router.get("/:id", authHandler, async (req, res) => {
   return sendResponse(res, StatusCodes.OK, result, ReasonPhrases.OK);
 });
 
-router.put("/:id", authHandler, verifyAdmin, async (req, res) => {
+// only admin can modify user data
+router.put("/:id", authHandler, verifyRoles(['ADMIN']), async (req, res) => {
   // Check if user exists
   const existingUser = await UserService.getById(req.params.id);
   if (!existingUser) {
@@ -37,7 +40,8 @@ router.put("/:id", authHandler, verifyAdmin, async (req, res) => {
   return sendResponse(res, StatusCodes.OK, result, ReasonPhrases.OK);
 });
 
-router.delete("/:id", authHandler, verifyAdmin, async (req, res) => {
+// only admin can delete user
+router.delete("/:id", authHandler, verifyRoles(['ADMIN']), async (req, res) => {
   // Check if user exists
   const existingUser = await UserService.getById(req.params.id);
   if (!existingUser) {

@@ -39,15 +39,15 @@ const refreshTokenHandler = async (refreshToken) => {
     return { accessToken: newAccessToken, refreshToken: newRefreshToken };
 };
 
-const verifyAdmin = async (req, res, next) => {
-    // Check if user is admin
-    if (!req.user.role.includes("ADMIN")) {
+const verifyRoles = roles => async (req, res, next) => {
+    // Check if user has any of the specified roles
+    if (!roles.some(role => req.user.role.includes(role))) {
         throw new Unauthenticated("Unauthorized");
     }
     next();
 };
 
-const verifyOwnerOrAdmin = async (req, res, next) => {
+const verifyResourceOwnerOrAdmin = async (req, res, next) => {
     const existingPost = await postService.getByPostId(req.params.id);
     const tokenisedUser = req.user;
     // Check if user is trying to update their own post or if they are not an admin
@@ -57,4 +57,4 @@ const verifyOwnerOrAdmin = async (req, res, next) => {
     next();
 }
 
-export { authHandler, refreshTokenHandler, verifyAdmin, verifyOwnerOrAdmin };
+export { authHandler, refreshTokenHandler, verifyRoles, verifyResourceOwnerOrAdmin };

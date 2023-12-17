@@ -7,17 +7,19 @@ import {
 } from 'http-status-codes';
 import NotFound from "../../errors/notFound.js";
 import BadRequest from "../../errors/badRequest.js";
-import { authHandler, verifyOwnerOrAdmin } from "../../middleware/authHandler.js";
+import { authHandler, verifyResourceOwnerOrAdmin } from "../../middleware/authHandler.js";
 import 'express-async-errors';
 
 const router = express.Router();
 
+// anyone can view all posts
 router.get("/", async (req, res) => {
     // Get all posts
     const result = await PostService.getAllPosts();
     return sendResponse(res, StatusCodes.OK, result, ReasonPhrases.OK);
 });
 
+// loggedin user can create new post
 router.post("/", authHandler, async (req, res) => {
     // Create new post
     const { title, content } = req.body;
@@ -28,6 +30,7 @@ router.post("/", authHandler, async (req, res) => {
     return sendResponse(res, StatusCodes.CREATED, result, ReasonPhrases.CREATED);
 });
 
+// anyone can view post by id
 router.get("/:id", async (req, res) => {
     // get post by id
     const result = await PostService.getByPostId(req.params.id);
@@ -37,6 +40,7 @@ router.get("/:id", async (req, res) => {
     return sendResponse(res, StatusCodes.OK, result, ReasonPhrases.OK);
 });
 
+// anyone can view posts by user id
 router.get("/user/:id", async (req, res) => {
     // get posts by user id
     const result = await PostService.findByUserId(req.params.id);
@@ -46,7 +50,9 @@ router.get("/user/:id", async (req, res) => {
     return sendResponse(res, StatusCodes.OK, result, ReasonPhrases.OK);
 });
 
-router.put("/:id", authHandler, verifyOwnerOrAdmin, async (req, res) => {
+// loggedin user can update their own post
+// or admins can update any post
+router.put("/:id", authHandler, verifyResourceOwnerOrAdmin, async (req, res) => {
     // Update post
     const result = await PostService.updateByPostId(req.params.id, req.body);
     if (!result) {
@@ -55,7 +61,9 @@ router.put("/:id", authHandler, verifyOwnerOrAdmin, async (req, res) => {
     return sendResponse(res, StatusCodes.OK, result, ReasonPhrases.OK);
 });
 
-router.delete("/:id", authHandler, verifyOwnerOrAdmin, async (req, res) => {
+// loggedin user can delete their own post
+// or admins can delete any post
+router.delete("/:id", authHandler, verifyResourceOwnerOrAdmin, async (req, res) => {
     // Delete post
     const result = await PostService.deleteByPostId(req.params.id);
     if (!result) {
